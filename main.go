@@ -5,7 +5,6 @@ import (
 	"flag"
 	"fmt"
 	"go_web_app/dao/mysql"
-	"go_web_app/dao/redis"
 	"go_web_app/logger"
 	"go_web_app/route"
 	"go_web_app/setting"
@@ -31,7 +30,7 @@ func main() {
 		fmt.Printf("init settings failed:%s \n", err)
 		return
 	}
-	// 初始化日志
+	// 初始化日志f
 	if err := logger.Init(setting.Config.LogConfig, setting.Config.Mode); err != nil {
 		fmt.Printf("init settings failed:%s \n", err)
 		return
@@ -46,19 +45,13 @@ func main() {
 		return
 	}
 	zap.L().Debug("mysql init success")
-	// 初始化redis
-	if err := redis.Init(setting.Config.RedisConfig); err != nil {
-		fmt.Printf("init redis failed:%s \n", err)
-		return
-	}
 
+	mysql.LoadConfig()
 	defer mysql.Close()
-	defer redis.Close()
-	zap.L().Debug("redis init success")
 	// 注册路由
 	r := route.Setup(setting.Config.Mode)
 	// 启动服务 （优雅关机）
-	//fmt.Println("port:", )
+
 	zap.L().Debug("server listen", zap.String("port", strconv.Itoa(setting.Config.Port)))
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%d", setting.Config.Port),

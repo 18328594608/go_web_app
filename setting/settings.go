@@ -2,9 +2,7 @@ package setting
 
 import (
 	"fmt"
-
 	"github.com/fsnotify/fsnotify"
-
 	"github.com/spf13/viper"
 )
 
